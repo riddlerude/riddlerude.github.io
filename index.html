@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#317EFB"/>
+  <link rel="manifest" href="manifest.json" />
+  <title>Aplikasi Sederhana PWA</title>
+</head>
+<body>
+  <h1>Halo Dunia!</h1>
+  <p>Ini adalah aplikasi web sederhana berbasis PWA.</p>
+  <button onclick="installApp()">Pasang Aplikasi</button>
+
+  <script>
+    let deferredPrompt;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    function installApp() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('Pengguna menerima pemasangan.');
+          } else {
+            console.log('Pengguna menolak pemasangan.');
+          }
+          deferredPrompt = null;
+        });
+      }
+    }
+
+    // Daftarkan Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(() => {
+        console.log('Service Worker berhasil didaftarkan.');
+      }).catch(error => {
+        console.error('Service Worker gagal didaftarkan:', error);
+      });
+    }
+  </script>
+</body>
+</html>
